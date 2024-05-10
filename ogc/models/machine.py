@@ -11,7 +11,7 @@ from ogc import db
 
 from .layout import LayoutModel
 
-log = structlog.getLogger()
+log = structlog.get_logger()
 
 
 @define

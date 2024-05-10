@@ -13,7 +13,7 @@ from ogc.commands.base import cli
 from ogc.deployer import exec_scripts
 from ogc.models import layout
 
-log = structlog.getLogger()
+log = structlog.get_logger()
 
 
 @click.command(help="Add a service to machine")

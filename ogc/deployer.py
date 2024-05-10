@@ -11,6 +11,7 @@ import tempfile
 import typing as t
 from multiprocessing import cpu_count
 from pathlib import Path
+from subprocess import run
 
 import arrow
 import rich.console
@@ -43,7 +44,7 @@ if _cpu_count >= 10:
 MAX_WORKERS = int(os.environ.get("OGC_MAX_WORKERS", _cpu_count))
 
 
-log = structlog.getLogger()
+log = structlog.get_logger()
 pool = Pool(MAX_WORKERS)
 
 
@@ -153,16 +154,17 @@ def ssh(provisioner: BaseProvisioner, **kwargs: MachineOpts) -> None:
         machine = nodes[0]
         if machine:
             cmd = [
+                "ssh",
+                "-tt",
                 "-o",
                 "StrictHostKeyChecking=no",
                 "-o",
                 "UserKnownHostsFile=/dev/null",
                 "-i",
-                Path(machine.layout.ssh_private_key).expanduser(),
+                str(Path(machine.layout.ssh_private_key).expanduser()),
                 f"{machine.layout.username}@{machine.node.public_ips[0]}",
             ]
-
-            sh.ssh(cmd, _fg=True, _env=os.environ.copy())  # type: ignore
+            log.info("ssh connection", command=" ".join(cmd))
             sys.exit(0)
     log.error("Could not find machine to ssh to")
     sys.exit(1)

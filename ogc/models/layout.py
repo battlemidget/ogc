@@ -17,8 +17,6 @@ class LayoutModel:
         provider="google",
         remote_path="/home/ubuntu",
         runs_on="ubuntu-2204-lts",
-        scale=9,
-        scripts="fixtures/ex_deploy_ubuntu",
         username="ubuntu",
         ssh_private_key=fs.expand_path("~/.ssh/id_rsa_libcloud"),
         ssh_public_key=fs.expand_path("~/.ssh/id_rsa_libcloud.pub"),
@@ -34,7 +32,6 @@ class LayoutModel:
     provider: str = field()
     remote_path: str = field()
     runs_on: str = field()
-    scale: int = field()
     username: str = field()
     ssh_private_key: str = field()
     ssh_public_key: str = field()

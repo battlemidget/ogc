@@ -16,7 +16,7 @@ from ogc.provision import BaseProvisioner
 # Not advertised, but available for those who seek moar power.
 MAX_WORKERS = int(os.environ.get("OGC_MAX_WORKERS", cpu_count() - 1))
 
-log = structlog.getLogger()
+log = structlog.get_logger()
 pool = Pool(size=MAX_WORKERS)
 
 

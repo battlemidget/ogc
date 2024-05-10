@@ -1,7 +1,17 @@
 """ Enums
 """
 
+from enum import StrEnum
 import typing as t
+
+# support server commands
+class COMMANDS(StrEnum):
+    """ supported pubsub commands """
+    UP = "up"
+    DOWN = "down"
+    EXEC = "exec"
+    EXEC_SCRIPT = "exec_script"
+
 
 CLOUD_IMAGE_MAP: t.Mapping[str, t.Mapping[str, t.Mapping[str, str]]] = {
     "aws": {

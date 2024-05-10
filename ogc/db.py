@@ -8,7 +8,7 @@ from diskcache import Cache
 
 from ogc.models.machine import MachineModel
 
-log = structlog.getLogger()
+log = structlog.get_logger()
 
 dill.settings["recurse"] = True
 

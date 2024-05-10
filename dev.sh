@@ -5,4 +5,4 @@ set -e
 
 export PYTHONPATH=".:$PYTHONPATH"
 
-exec "$@"
+exec ogc "$@"
