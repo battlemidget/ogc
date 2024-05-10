@@ -9,7 +9,11 @@ import typing as t
 import uuid
 from pathlib import Path
 
-from libcloud.common.google import ResourceNotFoundError
+from libcloud.common.google import (
+    InvalidRequestError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+)
 from libcloud.compute.base import (
     KeyPair,
     Node,
@@ -358,16 +362,23 @@ class GCEProvisioner(BaseProvisioner):
         try:
             self.provisioner.ex_get_firewall(name)  # type: ignore
         except ResourceNotFoundError:
-            log.warning("No firewall found, will create one to attach nodes to.")
-            self.provisioner.ex_create_firewall(  # type: ignore
-                name, [{"IPProtocol": "tcp", "ports": ports}], target_tags=tags
-            )
+            log.debug(f"No firewall found, will create {name} to attach nodes to.")
+            try:
+                self.provisioner.ex_create_firewall(  # type: ignore
+                    name, [{"IPProtocol": "tcp", "ports": ports}], target_tags=tags
+                )
+            except ResourceExistsError:
+                log.warning(
+                    f"Race, another process already created the firewall, skipping."
+                )
 
     def delete_firewall(self, name: str) -> None:
         try:
             self.provisioner.ex_destroy_firewall(self.provisioner.ex_get_firewall(name))  # type: ignore
         except ResourceNotFoundError:
-            log.error(f"Unable to delete firewall {name}")
+            log.error(f"Could not find firewall {name} to delete, will retry")
+        except InvalidRequestError as e:
+            log.error(f"Error deleting firewall {name}: {e}")
 
     def list_firewalls(self) -> list[str]:
         return self.provisioner.ex_list_firewalls()  # type: ignore
